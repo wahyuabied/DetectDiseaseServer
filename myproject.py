@@ -25,7 +25,6 @@ def home():
 
 @app.route("/api/Graph-Disease",methods=['GET'])
 def graph():
-	images_fname = "images/abid.png";
 
 	sehat=Db.selectData(5)
 	early=Db.selectData(1)
@@ -49,7 +48,7 @@ def graph():
 
 	return jsonify(
 		sehat_x = dataXS,
-		sehat_y = dataXS,
+		sehat_y = dataYS,
 		early_x = dataX,
 		early_y = dataY,
 		late_x = dataXL,
@@ -67,7 +66,7 @@ def create_new_folder(local_dir):
 		os.makedirs(newpath)
 	return newpath
 
-@app.route("/api/feature-extraction",methods=['POST'])
+@app.route("/api/feature-extraction-kentang",methods=['POST'])
 def featureDetection():
 	regularPath = 'static/images/'
 	app.logger.info(app.config['UPLOAD_FOLDER'])
@@ -86,11 +85,23 @@ def featureDetection():
 	stDev = kernel.getSDeviate(res1)
 	median = kernel.getMedian(res1)
 
-	maximum = Db.selectMaxValue()
+	sehat=Db.selectData(5)
+	early=Db.selectData(1)
+	late=Db.selectData(3)
 
-	maxMean = []
-	maxMedian = []
-	maxsDeviasi = []
+	data = [early,sehat,late]
+	dataTraining = kernel.naiveBayesData(data)
+	dataTest = []
+	dataTest.append(kernel.clasifierMean(mean))
+	dataTest.append(kernel.clasifierMedian(median))
+	dataTest.append(kernel.clasifierStDeviasi(stDev))
+	hasil = kernel.naiveBayes(dataTest,dataTraining)
+
+	# maximum = Db.selectMaxValue()
+
+	# maxMean = []
+	# maxMedian = []
+	# maxsDeviasi = []
 	
 	# for maximum in maxs:
 	# 	maxs = FeatureExtraction() 
@@ -103,10 +114,65 @@ def featureDetection():
 		mean = mean,
 		standart_deviasi = stDev,
 		median = median,
-		maxsDeviasi = maximum[0].getStDeviasi(),
-		maxMedian = maximum[0].getMedian(),
-		maxMean = maximum[0].getMean(),
+		penyakit = hasil,
+		# maxsDeviasi = maximum[0].getStDeviasi(),
+		# maxMedian = maximum[0].getMedian(),
+		# maxMean = maximum[0].getMean(),
+    )
+
+@app.route("/api/feature-extraction-tomat",methods=['POST'])
+def featureDetection():
+	regularPath = 'static/images/'
+	app.logger.info(app.config['UPLOAD_FOLDER'])
+	img = request.files['image']
+	img_name = secure_filename(img.filename)
+	create_new_folder(app.config['UPLOAD_FOLDER'])
+	saved_path = os.path.join(app.config['UPLOAD_FOLDER'], img_name)
+	app.logger.info("saving {}".format(saved_path))
+	img.save(saved_path)
+	os.chmod(saved_path, 0o755)
+
+	img = cv2.imread(saved_path,0)
+	filters = kernel.getKernel()
+	res1 = kernel.gaborFiltering(img, filters)
+	mean = kernel.getMean(res1)
+	stDev = kernel.getSDeviate(res1)
+	median = kernel.getMedian(res1)
+
+	sehat=Db.selectDataTomat(5)
+	early=Db.selectDataTomat(1)
+	late=Db.selectDataTomat(3)
+
+	data = [early,sehat,late]
+	dataTraining = kernel.naiveBayesData(data)
+	dataTest = []
+	dataTest.append(kernel.clasifierMean(mean))
+	dataTest.append(kernel.clasifierMedian(median))
+	dataTest.append(kernel.clasifierStDeviasi(stDev))
+	hasil = kernel.naiveBayes(dataTest,dataTraining)
+
+	# maximum = Db.selectMaxValue()
+
+	# maxMean = []
+	# maxMedian = []
+	# maxsDeviasi = []
+	
+	# for maximum in maxs:
+	# 	maxs = FeatureExtraction() 
+	# 	maxsDeviasi.append(float(maxs.getStDeviasi()))
+	# 	maxMedian.append(float(maxs.getMedian()))
+	# 	maxMean.append(float(maxs.getMean()))
+
+	return jsonify(
+		saved_path = saved_path,
+		mean = mean,
+		standart_deviasi = stDev,
+		median = median,
+		penyakit = hasil,
+		# maxsDeviasi = maximum[0].getStDeviasi(),
+		# maxMedian = maximum[0].getMedian(),
+		# maxMean = maximum[0].getMean(),
     )
 
 if __name__ == "__main__":
-    app.run(debug=True,host='0.0.0.0',port = 5000)
+    app.run(debug=True,host='127.0.0.1',port = 5000)

@@ -20,6 +20,8 @@ class crop:
 		x,y,w,h = cv2.boundingRect(cnt)
 		dst = img[y:y+h, x:x+w]
 		# cv2.imshow('show',dst)
-		location = 'crop/'+str(temp)+path
+		# location = str(temp)+path
+		# location = 'cropTomat/'+str(temp)+path
+		location = 'cropTesting/'+str(temp)+path
 		cv2.imwrite(location,dst)
 		return location

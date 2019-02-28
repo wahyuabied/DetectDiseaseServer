@@ -17,56 +17,105 @@ import matplotlib.pyplot as plt
 
 if __name__ == '__main__': 
 	##getData from DB
-	# sehat=Db.selectData(5)
-	# early=Db.selectData(1)
-	# late=Db.selectData(3)
 	id_kondisi=-1
 	path=[]
-	path.append('early/')
-	path.append('late/')
-	path.append('sehat/')
+	path.append('testing/')
+	# path.append('late/')
+	# path.append('sehat/')
 
-	mean = np.zeros((len(path),40))
-	median = np.zeros((len(path),40))
-	sDeviation = np.zeros((len(path),40))
-
-	# location = crop.cropping(path[0],'('+str(0+1)+').jpg')
-	# print(location)
-	# img = cv2.imread(location,0)
-	# print(type(img))
+	mean = np.zeros((len(path),46))
+	median = np.zeros((len(path),46))
+	sDeviation = np.zeros((len(path),46))
 
 	for y in range(0,len(path)):
-		for x in range(0,40):
+		for x in range(0,46):
 			# img = cv2.imread(path[y]+'('+str(x)+').jpg',0)
 			#Cropping
 			location = crop.cropping(path[y],'('+str(x+1)+').jpg')
-			print(location)
+			# print(location)
 			img = cv2.imread(location,0)
-			cv2.imshow('imageReal', img)
+			# cv2.imshow('imageReal', img)
 			filters = kernel.getKernel()
 			res1 = kernel.gaborFiltering(img, filters)
 			mean[y][x]=kernel.getMean(res1)
 			sDeviation[y][x]=kernel.getSDeviate(res1)
 			median[y][x]=kernel.getMedian(res1)
+			
 
-	maxMean = kernel.getMaximum(mean)
-	maxsDeviation = kernel.getMaximum(sDeviation)
-	maxMedian = kernel.getMaximum(median)
+	sehat=Db.selectData(5)
+	early=Db.selectData(1)
+	late=Db.selectData(3)
+	outlier=Db.selectData(6)
 
-	Db.insert_max_value(maxMean,maxMedian,maxsDeviation)
+	data = [early,sehat,late]
+	# print(data[0][0].getMedian())
+	dataTraining = kernel.naiveBayesData(data)
 
-	mean = kernel.normalize(mean)
-	sDeviation = kernel.normalize(sDeviation)
-	median = kernel.normalize(median)
-	
 	for y in range(0,len(path)):
-		id_kondisi=id_kondisi+2
-		for x in range(0,40):
-			Db.insert_crop('crop/'+path[y]+'('+str(x+1)+').jpg',id_kondisi,1.5,sDeviation[y][x],median[y][x],mean[y][x])
+		for x in range (0,46):
+			dataTest = []
+			dataTest.append(kernel.clasifierMean(mean[y][x]))
+			dataTest.append(kernel.clasifierMedian(median[y][x]))
+			dataTest.append(kernel.clasifierStDeviasi(sDeviation[y][x]))
+			print(kernel.naiveBayes(dataTest,dataTraining))
+			# print(mean[y][x])
+			# print(median[y][x])
+			# print(sDeviation[y][x])
+
+	# location = crop.cropping('late/','(26).jpg')
+	# # print(location)
+	# img = cv2.imread(location,0)
+	# cv2.imshow('imageReal', img)
+	# filters = kernel.getKernel()
+	# res1 = kernel.gaborFiltering(img, filters)
+	# mean[0][0]=kernel.getMean(res1)
+	# sDeviation[0][0]=kernel.getSDeviate(res1)
+	# median[0][0]=kernel.getMedian(res1)
+
+	# print(mean[0][0])
+	# print(median[0][0])
+	# print(sDeviation[0][0])
+
+	##normalize data to under 1
+	# mean = kernel.normalize(mean)
+	# sDeviation = kernel.normalize(sDeviation)
+	# median = kernel.normalize(median)
+	
+	##insert database
+	# for y in range(0,len(path)):
+	# 	id_kondisi=id_kondisi+2
+	# 	for x in range(0,40):
+	# 		Db.insert_crop_tomat('cropTomat/'+path[y]+'('+str(x+1)+').jpg',id_kondisi,1.5,sDeviation[y][x],median[y][x],mean[y][x])
 
 
 
-	#Get Graph
+	##remove outlier
+	# outlierEarly = kernel.removeOutlier(early)
+	# deleteEarlyId=[]
+	# outlierLate = kernel.removeOutlier(late)
+	# deleteLateId=[]
+	# outlierSehat = kernel.removeOutlier(sehat)
+	# deleteSehatId=[]
+
+	# for z in range(0, len(early)):
+	# 	if float(early[z].getMedian()) < outlierEarly[0] or float(early[z].getMedian()) > outlierEarly[1]:
+	# 		deleteEarlyId.append(early[z].getId())
+	# 	if float(late[z].getMedian()) < outlierLate[0] or float(late[z].getMedian()) > outlierLate[1]:
+	# 		deleteLateId.append(late[z].getId())
+	# 	if float(sehat[z].getMedian()) < outlierSehat[0] or float(sehat[z].getMedian()) > outlierSehat[1]:
+	# 		deleteSehatId.append(sehat[z].getId())			
+
+	# for a in range(0, len(deleteEarlyId)):
+	# 	Db.editData(deleteEarlyId[a])
+	# 	Db.editData(deleteLateId[a])
+	# 	Db.editData(deleteSehatId[a])
+
+
+
+	# maxData = Db.getMaxValue()
+	# Db.insert_max_value(maxData[1],maxData[2],maxData[0])
+
+	## Get Graph
 	# dataX = []
 	# dataY = []
 	# for ear in early:
@@ -82,14 +131,16 @@ if __name__ == '__main__':
 	# for lte in late:
 	# 	dataXL.append(float(lte.getStDeviasi()))
 	# 	dataYL.append(float(lte.getMean()))
+	# dataOX = []
+	# dataOY = []
+	# for out in outlier:
+	# 	dataOX.append(float(out.getStDeviasi()))
+	# 	dataOY.append(float(out.getMean()))
 	
-	# plt.plot(dataX, dataY, 'ro',dataXS,dataYS,'go',dataXL,dataYL,'bo')
+	# plt.plot(dataX, dataY, 'ro',dataXS,dataYS,'go',dataXL,dataYL,'bo',dataOX,dataOY,'ko')
 	# plt.show()
 
-	#Interseksi
-	#Histogram proyeksi
-	#Region of interest(ROI)
+	
 
 	cv2.waitKey(0)
 	cv2.destroyAllWindows()
-

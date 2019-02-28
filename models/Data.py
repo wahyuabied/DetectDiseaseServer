@@ -4,6 +4,7 @@ class Data:
         self.__name = ""
         self.__st_deviasi = ""
         self.__mean = ""
+        self.__median = ""
         self.__id_kondisi = ""
         self.__r = ""
 
@@ -30,6 +31,12 @@ class Data:
 
     def getMean(self):
     	return self.__mean
+
+    def setMedian(self,median):
+        self.__median = median
+
+    def getMedian(self):
+        return self.__median
 
     def setIdKondisi(self,id_kondisi):
     	self.__id_kondisi = id_kondisi
