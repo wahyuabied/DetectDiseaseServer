@@ -121,7 +121,7 @@ def featureDetection():
     )
 
 @app.route("/api/feature-extraction-tomat",methods=['POST'])
-def featureDetection():
+def featureDetectionTomat():
 	regularPath = 'static/images/'
 	app.logger.info(app.config['UPLOAD_FOLDER'])
 	img = request.files['image']
@@ -175,4 +175,4 @@ def featureDetection():
     )
 
 if __name__ == "__main__":
-    app.run(debug=True,host='127.0.0.1',port = 5000)
+    app.run(host='0.0.0.0')

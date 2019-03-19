@@ -8,7 +8,7 @@ class Db:
 	    # return pymysql.connect(host='35.185.118.181',user='wahyuabied',password='wahyuabied',db='ta',charset='utf8mb4',cursorclass=pymysql.cursors.DictCursor)
 
 	def getConnection():
-	    return pymysql.connect(host='127.0.0.1',user='root',password='',db='ta',charset='utf8mb4',cursorclass=pymysql.cursors.DictCursor)
+	    return pymysql.connect(host='157.230.252.251',user='wahyuabied',password='wahyuabied',db='ta',charset='utf8mb4',cursorclass=pymysql.cursors.DictCursor)
 
 	def insert_crop(paths,id_kondisi,r,st_deviasi,median,mean):
 		conn = Db.getConnection()
