@@ -1,5 +1,6 @@
 import pymysql.cursors
 from models.Data import Data
+from models.Penyakit import Penyakit
 from models.FeatureExtraction import FeatureExtraction
 
 class Db:
@@ -92,6 +93,35 @@ class Db:
 		extractionData.append(result[0]['mean'])
 		extractionData.append(result[0]['median'])
 		return extractionData
+
+	def getPenyakit():
+		conn = Db.getConnection()
+		myCursor = conn.cursor()
+		sql = 'SELECT * from penyakit'
+		myCursor.execute(sql)
+		result = myCursor.fetchall()
+		conn.commit()
+		conn.close()
+		allPenyakit = []
+		for x in range(0, len(result)):
+			# penyakit = Penyakit()
+			# penyakit.setId(result[x]['id'])
+			# penyakit.setName(result[x]['name'])
+			# penyakit.setDeskripsi(result[x]['deskripsi'])
+			# penyakit.setGejala(result[x]['gejala'])
+			# penyakit.setSolusi(result[x]['solusi'])
+			# penyakit.setGambar(result[x]['gambar'])
+			penyakit = {
+				'id': result[x]['id'],
+				'name':result[x]['name'],
+				'deskripsi':result[x]['deskripsi'],
+				'gejala': result[x]['gejala'],
+				'solusi':result[x]['solusi'],
+				'gambar':result[x]['gambar']
+
+			}
+			allPenyakit.append(penyakit)
+		return allPenyakit
 
 	def selectMaxValue():
 		conn = Db.getConnection()
