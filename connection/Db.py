@@ -6,10 +6,7 @@ from models.FeatureExtraction import FeatureExtraction
 class Db:
 
 	def getConnection():
-	    return pymysql.connect(host='35.185.118.181',user='wahyuabied',password='wahyuabied',db='ta',charset='utf8mb4',cursorclass=pymysql.cursors.DictCursor)
-
-	# def getConnection():
-	#     return pymysql.connect(host='127.0.0.1',user='root',password='',db='ta',charset='utf8mb4',cursorclass=pymysql.cursors.DictCursor)
+	    return pymysql.connect(host='127.0.0.1',user='root',password='',db='ta',charset='utf8mb4',cursorclass=pymysql.cursors.DictCursor)
 
 	def insert_crop(paths,id_kondisi,r,st_deviasi,median,mean):
 		conn = Db.getConnection()
@@ -104,13 +101,6 @@ class Db:
 		conn.close()
 		allPenyakit = []
 		for x in range(0, len(result)):
-			# penyakit = Penyakit()
-			# penyakit.setId(result[x]['id'])
-			# penyakit.setName(result[x]['name'])
-			# penyakit.setDeskripsi(result[x]['deskripsi'])
-			# penyakit.setGejala(result[x]['gejala'])
-			# penyakit.setSolusi(result[x]['solusi'])
-			# penyakit.setGambar(result[x]['gambar'])
 			penyakit = {
 				'id': result[x]['id'],
 				'name':result[x]['name'],
@@ -122,6 +112,27 @@ class Db:
 			}
 			allPenyakit.append(penyakit)
 		return allPenyakit
+
+	def getPestisida():
+		conn = Db.getConnection()
+		myCursor = conn.cursor()
+		sql = 'SELECT * from pestisida'
+		myCursor.execute(sql)
+		result = myCursor.fetchall()
+		conn.commit()
+		conn.close()
+		allPestisida = []
+		for x in range(0, len(result)):
+			penyakit = {
+				'id': result[x]['id'],
+				'nama':result[x]['nama'],
+				'deskripsi':result[x]['deskripsi'],
+				'gambar': result[x]['gambar'],
+				'url':result[x]['url']
+
+			}
+			allPestisida.append(penyakit)
+		return allPestisida	
 
 	def selectMaxValue():
 		conn = Db.getConnection()

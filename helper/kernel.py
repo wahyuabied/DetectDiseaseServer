@@ -10,24 +10,6 @@ class kernel:
 	def frequency_to_lamda(x):
 		return (1/x)
 
-	# def get_gabor_kernel(kernel_size_x, kernel_size_y,sigma_x, sigma_y, theta, frequency, psi):
-	# 	sigma_x = sigma_x
-	# 	sigma_y = float(sigma_x) / sigma_y
-	# 	nstds = 3 # Number of standard deviation sigma
-	# 	xmax = max(abs(nstds * sigma_x * np.cos(theta)), abs(nstds * sigma_y * np.sin(theta)))
-	# 	xmax = np.ceil(max(1, xmax))
-	# 	ymax = max(abs(nstds * sigma_x * np.sin(theta)), abs(nstds * sigma_y * np.cos(theta)))
-	# 	ymax = np.ceil(max(1, ymax))
-	# 	xmin = -xmax
-	# 	ymin = -ymax
-	# 	(y, x) = np.meshgrid(np.arange(ymin, ymax + 1), np.arange(xmin, xmax + 1))
-	#     #Rotasi
-	# 	x_theta = x * np.cos(theta) + y * np.sin(theta)
-	# 	y_theta = -x * np.sin(theta) + y * np.cos(theta)
-	#     #Calculate the gabor kernel according the formula
-	# 	gb = np.exp(-.5*(x_theta ** 2.0 / sigma_x ** 2.0 + y_theta ** 2.0 / sigma_y ** 2.0)) * np.cos(2 * np.pi * frequency * x_theta + psi)
-	# 	return gb
-
 	def getKernel():
 		filters = []
 		ksize = 31  #31
@@ -55,17 +37,17 @@ class kernel:
 
 	def getMean(var):
 		jumlah = np.mean(var)
-		# print(jumlah)
+		print(jumlah)
 		return jumlah	
 
 	def getSDeviate(var):
 		hasil = np.std(var)
-		# print(hasil)
+		print(hasil)
 		return hasil
 
 	def getMedian(var):
 		hasil = np.median(var)
-		# print(hasil)
+		print(hasil)
 		return hasil
 
 	def normalize(data):
@@ -119,6 +101,7 @@ class kernel:
 				dataNaiveBayes.append(DataNaiveBayes(kernel.clasifierStDeviasi(data[i][j].getStDeviasi()),kernel.clasifierMean(data[i][j].getMean()),kernel.clasifierMedian(data[i][j].getMedian()),data[i][j].getIdKondisi()))
 
 		return dataNaiveBayes
+
 
 	def naiveBayes(dataTest, dataTraining):	
 
