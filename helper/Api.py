@@ -57,6 +57,7 @@ if __name__ == '__main__':
 			dataTest.append(kernel.clasifierMean(mean[y][x]))
 			dataTest.append(kernel.clasifierMedian(median[y][x]))
 			dataTest.append(kernel.clasifierStDeviasi(sDeviation[y][x]))
+			print(str(mean[y][x])+str(median[y][x])+str(sDeviation[y][x]))
 			print(kernel.naiveBayes(dataTest,dataTraining))
 			# print(mean[y][x])
 			# print(median[y][x])

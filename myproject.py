@@ -1,11 +1,12 @@
 
-import  sys, os, logging
+import  sys, os, logging,json
 sys.path.insert(0, '/~/myproject/')
 from flask import Flask, redirect,render_template, url_for,request,jsonify
 from werkzeug.utils import secure_filename
 from io import StringIO
 import numpy as np
 import cv2
+from models.Penyakit import Penyakit
 from connection.Db import Db
 from helper import stat as stat
 from helper.kernel import kernel
@@ -23,15 +24,18 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def home():
     return "Hello, World!"
 
+@app.route("/api/get-penyakit")
+def penyakit():
+	penyakit = Db.getPenyakit()
+	return jsonify(penyakit)
+
 @app.route("/api/Graph-Disease",methods=['GET'])
 def graph():
-
 	sehat=Db.selectData(5)
 	early=Db.selectData(1)
 	late=Db.selectData(3)
 	dataX = []
 	dataY = []
-	img = StringIO()
 	for ear in early:
 		dataX.append(float(ear.getStDeviasi()))
 		dataY.append(float(ear.getMean()))
