@@ -29,6 +29,11 @@ def penyakit():
 	penyakit = Db.getPenyakit()
 	return jsonify(penyakit)
 
+@app.route("/api/get-pestisida")
+def pestisida():
+	pestisida = Db.getPestisida()
+	return jsonify(pestisida)
+
 @app.route("/api/Graph-Disease",methods=['GET'])
 def graph():
 	sehat=Db.selectData(5)
@@ -101,27 +106,12 @@ def featureDetection():
 	dataTest.append(kernel.clasifierStDeviasi(stDev))
 	hasil = kernel.naiveBayes(dataTest,dataTraining)
 
-	# maximum = Db.selectMaxValue()
-
-	# maxMean = []
-	# maxMedian = []
-	# maxsDeviasi = []
-	
-	# for maximum in maxs:
-	# 	maxs = FeatureExtraction() 
-	# 	maxsDeviasi.append(float(maxs.getStDeviasi()))
-	# 	maxMedian.append(float(maxs.getMedian()))
-	# 	maxMean.append(float(maxs.getMean()))
-
 	return jsonify(
 		saved_path = saved_path,
 		mean = mean,
 		standart_deviasi = stDev,
 		median = median,
 		penyakit = hasil,
-		# maxsDeviasi = maximum[0].getStDeviasi(),
-		# maxMedian = maximum[0].getMedian(),
-		# maxMean = maximum[0].getMean(),
     )
 
 @app.route("/api/feature-extraction-tomat",methods=['POST'])
@@ -155,27 +145,12 @@ def featureDetectionTomat():
 	dataTest.append(kernel.clasifierStDeviasi(stDev))
 	hasil = kernel.naiveBayes(dataTest,dataTraining)
 
-	# maximum = Db.selectMaxValue()
-
-	# maxMean = []
-	# maxMedian = []
-	# maxsDeviasi = []
-	
-	# for maximum in maxs:
-	# 	maxs = FeatureExtraction() 
-	# 	maxsDeviasi.append(float(maxs.getStDeviasi()))
-	# 	maxMedian.append(float(maxs.getMedian()))
-	# 	maxMean.append(float(maxs.getMean()))
-
 	return jsonify(
 		saved_path = saved_path,
 		mean = mean,
 		standart_deviasi = stDev,
 		median = median,
 		penyakit = hasil,
-		# maxsDeviasi = maximum[0].getStDeviasi(),
-		# maxMedian = maximum[0].getMedian(),
-		# maxMean = maximum[0].getMean(),
     )
 
 if __name__ == "__main__":

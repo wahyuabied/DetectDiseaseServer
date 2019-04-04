@@ -13,7 +13,6 @@ class Db:
 	# def getConnection():
 	#     return pymysql.connect(host='127.0.0.1',user='root',password='',db='ta',charset='utf8mb4',cursorclass=pymysql.cursors.DictCursor)
 
-
 	def insert_crop(paths,id_kondisi,r,st_deviasi,median,mean):
 		conn = Db.getConnection()
 		myCursor = conn.cursor()
@@ -126,11 +125,34 @@ class Db:
 			allPenyakit.append(penyakit)
 		return allPenyakit
 
+
+	def getPestisida():
+		conn = Db.getConnection()
+		myCursor = conn.cursor()
+		sql = 'SELECT * from pestisida'
+		myCursor.execute(sql)
+		result = myCursor.fetchall()
+		conn.commit()
+		conn.close()
+		allPestisida = []
+		for x in range(0, len(result)):
+			penyakit = {
+				'id': result[x]['id'],
+				'nama':result[x]['nama'],
+				'deskripsi':result[x]['deskripsi'],
+				'gambar': result[x]['gambar'],
+				'url':result[x]['url']
+
+			}
+			allPestisida.append(penyakit)
+		return allPestisida
+
+
 	def selectMaxValue():
 		conn = Db.getConnection()
 		myCursor = conn.cursor()
 		sql = 'SELECT * from maximum_value '
-		myCursor.execute(sql) 
+		myCursor.execute(sql)
 		result = myCursor.fetchall()
 		conn.commit()
 		conn.close()
