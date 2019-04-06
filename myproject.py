@@ -87,7 +87,8 @@ def featureDetection():
 	img.save(saved_path)
 	os.chmod(saved_path, 0o755)
 
-	img = cv2.imread(saved_path,0)
+	location = crop.cropping(saved_path)
+	img = cv2.imread(location,0)
 	filters = kernel.getKernel()
 	res1 = kernel.gaborFiltering(img, filters)
 	mean = kernel.getMean(res1)

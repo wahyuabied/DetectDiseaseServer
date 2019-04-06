@@ -19,7 +19,7 @@ class kernel:
 			for j in np.arange(0,len(scale),1):
 			 	kern = cv2.getGaborKernel((ksize, ksize), 3.0,theta[i], scale[j], 0.5, 0, ktype=cv2.CV_32F)
 			 	# resized_image = cv2.resize(kern, (200, 200))
-			 	# cv2.imshow('kernel'+str(i)+str(j), resized_image)
+			 	# cv2.imshow('kernel'+str(i)+str(j), kern)
 			 	# cv2.imshow('kernel'+str(i), kern)
 		 		kern /= 1.5*kern.sum()
 		 		filters.append(kern)
@@ -102,6 +102,16 @@ class kernel:
 
 		return dataNaiveBayes
 
+	def naiveBayesDataTomat(data):
+		status = ["early","sehat","late"]
+		dataNaiveBayes = []
+		
+		for i in range(0,len(status)):
+			for j in range (0,len(data[i])):
+				dataNaiveBayes.append(DataNaiveBayes(kernel.clasifierStDeviasiTomat(data[i][j].getStDeviasi()),kernel.clasifierMeanTomat(data[i][j].getMean()),kernel.clasifierMedianTomat(data[i][j].getMedian()),data[i][j].getIdKondisi()))
+
+		return dataNaiveBayes
+
 
 	def naiveBayes(dataTest, dataTraining):	
 
@@ -177,8 +187,10 @@ class kernel:
 			return "early"
 		elif (late > early and late >sehat):
 			return "late"
+		else:
+			return(str(sehat) +" "+str(early)+" "+str(late))
 
-		return "Data tidak dapat digolongkan"
+		return (str(sehat) +" "+str(early)+" "+str(late))
 
 	def clasifierStDeviasi(nilai):
 		nilai = float (nilai)
@@ -213,3 +225,36 @@ class kernel:
 
 		return stDeviasi
 
+	def clasifierStDeviasiTomat(nilai):
+		nilai = float (nilai)
+		if nilai<64:
+			stDeviasi = "rendah"
+		elif nilai>70:
+			stDeviasi = "tinggi"
+		else:
+			stDeviasi = "sedang"
+
+		return stDeviasi
+
+
+	def clasifierMeanTomat(nilai):
+		nilai = float (nilai)
+		if nilai < 108:
+			stDeviasi = "rendah"
+		elif nilai>119:
+			stDeviasi = "tinggi"
+		else:
+			stDeviasi = "sedang"
+
+		return stDeviasi
+
+	def clasifierMedianTomat(nilai):
+		nilai = float (nilai)
+		if nilai < 133:
+			stDeviasi = "rendah"
+		elif nilai>154:
+			stDeviasi = "tinggi"
+		else:
+			stDeviasi = "sedang"
+
+		return stDeviasi

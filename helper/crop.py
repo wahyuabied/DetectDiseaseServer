@@ -1,12 +1,15 @@
 import cv2
 import numpy as np
 import random as rng
+from skimage import color
+from PIL import Image
+import os
 
 class crop:
 	
-	def cropping(temp,path):
+	def cropping(path):
 
-		img = cv2.imread(temp+path)
+		img = cv2.imread(path,1)
 		gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 		th, threshed = cv2.threshold(gray, 100, 255, cv2.THRESH_BINARY_INV)
 
@@ -23,42 +26,99 @@ class crop:
 		dst = img[y:y+h, x:x+w]
 		# cv2.imshow('show',dst)
 		# location = str(temp)+path
-		location = 'cropTomat/'+str(temp)+path
-		# location = 'cropTesting/'+str(temp)+path
-		cv2.imwrite(location,dst)
-		return location
+		# location = temp+path
+		resize = cv2.resize(dst,(256,256))
+		cv2.imwrite(path,resize)
+		return path
 
-	def segment(image):
-	    """
-	    Object Segmentation in Uniform Background using Edge Detection
-	    """
-	 
-	    # convert BGR image to grayscale
-	    # image_gray = cv2.cvtColor(image, cv2.cv.CV_BGR2GRAY)
-	    image_gray = cv2.GaussianBlur(image, (5, 5), 0)
-	 
-	    # get contours
-	    edges = cv2.Canny(image_gray, 20, 60)
-	    _, contours, hierarchy = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-	    drawing = np.zeros((edges.shape[0], edges.shape[1], 3), dtype=np.uint8)
-	    for i in range(len(contours)):
-	    	color = (rng.randint(0,256), rng.randint(0,256), rng.randint(0,256))
-	    	cv2.drawContours(drawing, contours, i, color, 2, cv2.LINE_8, hierarchy, 0)
-	    cv2.imshow('Contours', drawing)
-	 
-	    # masking object
-	    # result = np.zeros(image.shape, dtype='uint8')
-	    # result[mask > 0, :] = image[mask > 0, :]
-	 
-	    return drawing
+	def removeBackground(imgo):
+	    img = cv2.imread(imgo)
+	    height, width = img.shape[:2]
 
-	def segmentasi(image):
-	    """
-	    Object Segmentation in Uniform Background using Edge Detection
-	    """
-	    ret, thresh = cv2.threshold(image, 127, 255, 0)
-	    im2, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-	    cv2.drawContours(image, contours, -1, (0,255,0), 3)
+	    mask = np.zeros(img.shape[:2],np.uint8)
+		
+	    bgdModel = np.zeros((1,65),np.float64)
+	    fgdModel = np.zeros((1,65),np.float64)
 
-	    return image
-	 
+		#Hard Coding the Rect The object must lie within this rect.
+	    rect = (15,15,width-30,height-30)
+	    cv2.grabCut(img,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)
+	    mask = np.where((mask==2)|(mask==0),0,1).astype('uint8')
+	    img1 = img*mask[:,:,np.newaxis]
+	    # cv2.imshow('potong', img1)
+	  
+	    
+	    newmask = color.rgb2gray(img)
+
+	    mask[newmask == 0] = 0
+	    mask[newmask == 255] = 1
+	    mask, bgdModel, fgdModel = cv2.grabCut(img1,mask,None,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_MASK)
+	    mask = np.where((mask==2)|(mask==0),0,1).astype('uint8')
+	    img1 = img1*mask[:,:,np.newaxis]
+
+	    #crop background
+	    background = img - img1
+	    background[np.where((background > [0,0,0]).all(axis = 2))] = [255,255,255]
+	    # cv2.imshow('background', background)
+	    # background2 = crop.removeNoisy(background)
+
+	    final = background + img1
+	    # dst = final[y:y+h, x:x+w]
+	    cv2.imwrite(imgo,final)
+
+	    return final
+
+	def removeBackgroundTraining(path,name,imgo):
+	    # cv2.imshow('awal', imgo)
+	    height, width = imgo.shape[:2]
+
+	    mask = np.zeros(imgo.shape[:2],np.uint8)
+		
+	    bgdModel = np.zeros((1,65),np.float64)
+	    fgdModel = np.zeros((1,65),np.float64)
+
+		#Hard Coding the Rect The object must lie within this rect.
+	    rect = (15,15,width-30,height-30)
+	    cv2.grabCut(imgo,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)
+	    mask = np.where((mask==2)|(mask==0),0,1).astype('uint8')
+	    img1 = imgo*mask[:,:,np.newaxis]
+	    # cv2.imshow('potong', img1)
+	  
+	    
+	    newmask = color.rgb2gray(imgo)
+
+	    mask[newmask == 0] = 0
+	    mask[newmask == 255] = 1
+	    mask, bgdModel, fgdModel = cv2.grabCut(img1,mask,None,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_MASK)
+	    mask = np.where((mask==2)|(mask==0),0,1).astype('uint8')
+	    img1 = img1*mask[:,:,np.newaxis]
+
+	    #crop background
+	    background = imgo - img1
+	    background[np.where((background > [0,0,0]).all(axis = 2))] = [255,255,255]
+	    # cv2.imshow('background', background)
+	    # background2 = crop.removeNoisy(background)
+
+	    final = background + img1
+	    # # dst = final[y:y+h, x:x+w]
+	    cv2.imwrite("noBackground/"+path+name+".jpg",final)
+	    crop.convertPNG("noBackground/"+path,name)
+
+	    return "noBackground/"+path+name
+
+
+	#Harus JPG ,background putih akan di buat transparent
+	def convertPNG(path,nameFile):
+	    img = Image.open(path+nameFile+".jpg")
+	    img = img.convert("RGBA")
+	    pixdata = img.load()
+
+	    width, height = img.size
+	    for y in range(height):
+	        for x in range(width):
+	            if pixdata[x, y] == (255, 255, 255, 255):
+	                pixdata[x, y] = (255, 255, 255, 0)
+
+	    os.remove(path+nameFile+".jpg")
+	    img.save(path+nameFile+".png", "PNG")
+		
