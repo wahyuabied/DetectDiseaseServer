@@ -2,8 +2,11 @@ import cv2
 import numpy as np
 import random as rng
 from skimage import color
+<<<<<<< HEAD
 from PIL import Image
 import os
+=======
+>>>>>>> 2cfb9acb6de23a0cf8c26d47d964e82ff291a098
 
 class crop:
 	
@@ -26,10 +29,17 @@ class crop:
 		dst = img[y:y+h, x:x+w]
 		# cv2.imshow('show',dst)
 		# location = str(temp)+path
+<<<<<<< HEAD
 		# location = temp+path
 		resize = cv2.resize(dst,(256,256))
 		cv2.imwrite(path,resize)
 		return path
+=======
+		location = 'cropTomat/'+str(temp)+path
+		# location = 'cropTesting/'+str(temp)+path
+		cv2.imwrite(location,dst)
+		return location
+>>>>>>> 2cfb9acb6de23a0cf8c26d47d964e82ff291a098
 
 	def removeBackground(imgo):
 	    img = cv2.imread(imgo)
@@ -45,7 +55,11 @@ class crop:
 	    cv2.grabCut(img,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)
 	    mask = np.where((mask==2)|(mask==0),0,1).astype('uint8')
 	    img1 = img*mask[:,:,np.newaxis]
+<<<<<<< HEAD
 	    # cv2.imshow('potong', img1)
+=======
+	    cv2.imshow('potong', img1)
+>>>>>>> 2cfb9acb6de23a0cf8c26d47d964e82ff291a098
 	  
 	    
 	    newmask = color.rgb2gray(img)
@@ -82,7 +96,6 @@ class crop:
 	    cv2.grabCut(imgo,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)
 	    mask = np.where((mask==2)|(mask==0),0,1).astype('uint8')
 	    img1 = imgo*mask[:,:,np.newaxis]
-	    # cv2.imshow('potong', img1)
 	  
 	    
 	    newmask = color.rgb2gray(imgo)
@@ -122,3 +135,7 @@ class crop:
 	    os.remove(path+nameFile+".jpg")
 	    img.save(path+nameFile+".png", "PNG")
 		
+	    # dst = final[y:y+h, x:x+w]
+	    cv2.imwrite("noBack/"+path+name,final)
+
+	    return final

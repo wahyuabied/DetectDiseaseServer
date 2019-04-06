@@ -95,9 +95,9 @@ def featureDetection():
 	stDev = kernel.getSDeviate(res1)
 	median = kernel.getMedian(res1)
 
-	sehat=Db.selectData(5)
-	early=Db.selectData(1)
-	late=Db.selectData(3)
+	sehat=Db.selectDataTomat(5)
+	early=Db.selectDataTomat(1)
+	late=Db.selectDataTomat(3)
 
 	data = [early,sehat,late]
 	dataTraining = kernel.naiveBayesData(data)
@@ -127,6 +127,7 @@ def featureDetectionTomat():
 	img.save(saved_path)
 	os.chmod(saved_path, 0o755)
 
+	img = crop.removeBackground(saved_path)
 	img = cv2.imread(saved_path,0)
 	filters = kernel.getKernel()
 	res1 = kernel.gaborFiltering(img, filters)
@@ -139,11 +140,11 @@ def featureDetectionTomat():
 	late=Db.selectDataTomat(3)
 
 	data = [early,sehat,late]
-	dataTraining = kernel.naiveBayesData(data)
+	dataTraining = kernel.naiveBayesDataTomat(data)
 	dataTest = []
-	dataTest.append(kernel.clasifierMean(mean))
-	dataTest.append(kernel.clasifierMedian(median))
-	dataTest.append(kernel.clasifierStDeviasi(stDev))
+	dataTest.append(kernel.clasifierMeanTomat(mean))
+	dataTest.append(kernel.clasifierMedianTomat(median))
+	dataTest.append(kernel.clasifierStDeviasiTomat(stDev))
 	hasil = kernel.naiveBayes(dataTest,dataTraining)
 
 	return jsonify(
