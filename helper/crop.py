@@ -2,12 +2,15 @@ import cv2
 import numpy as np
 import random as rng
 from skimage import color
+from PIL import Image
+import os
+
 
 class crop:
 	
-	def cropping(temp,path):
+	def cropping(path):
 
-		img = cv2.imread(temp+path)
+		img = cv2.imread(path,1)
 		gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 		th, threshed = cv2.threshold(gray, 100, 255, cv2.THRESH_BINARY_INV)
 
@@ -24,10 +27,11 @@ class crop:
 		dst = img[y:y+h, x:x+w]
 		# cv2.imshow('show',dst)
 		# location = str(temp)+path
-		location = 'cropTomat/'+str(temp)+path
-		# location = 'cropTesting/'+str(temp)+path
-		cv2.imwrite(location,dst)
-		return location
+
+		# location = temp+path
+		resize = cv2.resize(dst,(256,256))
+		cv2.imwrite(path,resize)
+		return path
 
 	def removeBackground(imgo):
 	    img = cv2.imread(imgo)
@@ -43,8 +47,7 @@ class crop:
 	    cv2.grabCut(img,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)
 	    mask = np.where((mask==2)|(mask==0),0,1).astype('uint8')
 	    img1 = img*mask[:,:,np.newaxis]
-	   #cv2.imshow('potong', img1)
-
+	    # cv2.imshow('potong', img1)
 	    newmask = color.rgb2gray(img)
 
 	    mask[newmask == 0] = 0
@@ -65,7 +68,7 @@ class crop:
 
 	    return final
 
-	def removeBackgroundTesting(path,name,imgo):
+	def removeBackgroundTraining(path,name,imgo):
 	    # cv2.imshow('awal', imgo)
 	    height, width = imgo.shape[:2]
 
@@ -79,9 +82,6 @@ class crop:
 	    cv2.grabCut(imgo,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)
 	    mask = np.where((mask==2)|(mask==0),0,1).astype('uint8')
 	    img1 = imgo*mask[:,:,np.newaxis]
-	    #cv2.imshow('potong', img1)
-
-
 	    newmask = color.rgb2gray(imgo)
 
 	    mask[newmask == 0] = 0
@@ -97,6 +97,28 @@ class crop:
 	    # background2 = crop.removeNoisy(background)
 
 	    final = background + img1
+	    # # dst = final[y:y+h, x:x+w]
+	    cv2.imwrite("noBackground/"+path+name+".jpg",final)
+	    crop.convertPNG("noBackground/"+path,name)
+
+	    return "noBackground/"+path+name
+
+
+	#Harus JPG ,background putih akan di buat transparent
+	def convertPNG(path,nameFile):
+	    img = Image.open(path+nameFile+".jpg")
+	    img = img.convert("RGBA")
+	    pixdata = img.load()
+
+	    width, height = img.size
+	    for y in range(height):
+	        for x in range(width):
+	            if pixdata[x, y] == (255, 255, 255, 255):
+	                pixdata[x, y] = (255, 255, 255, 0)
+
+	    os.remove(path+nameFile+".jpg")
+	    img.save(path+nameFile+".png", "PNG")
+		
 	    # dst = final[y:y+h, x:x+w]
 	    cv2.imwrite("noBack/"+path+name,final)
 

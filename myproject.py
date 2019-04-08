@@ -87,6 +87,7 @@ def featureDetection():
 	img.save(saved_path)
 	os.chmod(saved_path, 0o755)
 
+#	location = crop.cropping(saved_path)
 	img = cv2.imread(saved_path,0)
 	filters = kernel.getKernel()
 	res1 = kernel.gaborFiltering(img, filters)
@@ -94,9 +95,9 @@ def featureDetection():
 	stDev = kernel.getSDeviate(res1)
 	median = kernel.getMedian(res1)
 
-	sehat=Db.selectDataTomat(5)
-	early=Db.selectDataTomat(1)
-	late=Db.selectDataTomat(3)
+	sehat=Db.selectData(5)
+	early=Db.selectData(1)
+	late=Db.selectData(3)
 
 	data = [early,sehat,late]
 	dataTraining = kernel.naiveBayesData(data)

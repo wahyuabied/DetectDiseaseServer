@@ -187,8 +187,10 @@ class kernel:
 			return "early"
 		elif (late > early and late >sehat):
 			return "late"
+		else:
+			return(str(sehat) +" "+str(early)+" "+str(late))
 
-		return "Data tidak dapat digolongkan"
+		return (str(sehat) +" "+str(early)+" "+str(late))
 
 	def clasifierStDeviasi(nilai):
 		nilai = float (nilai)
