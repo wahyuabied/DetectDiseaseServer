@@ -22,7 +22,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route("/")
 def home():
-    return "Hello, World!"
+    return render_template('index.html')
 
 @app.route("/api/get-penyakit")
 def penyakit():
@@ -95,9 +95,9 @@ def featureDetection():
 	stDev = kernel.getSDeviate(res1)
 	median = kernel.getMedian(res1)
 
-	sehat=Db.selectDataTomat(5)
-	early=Db.selectDataTomat(1)
-	late=Db.selectDataTomat(3)
+	sehat=Db.selectData(5)
+	early=Db.selectData(1)
+	late=Db.selectData(3)
 
 	data = [early,sehat,late]
 	dataTraining = kernel.naiveBayesData(data)
