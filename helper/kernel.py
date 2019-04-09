@@ -1,5 +1,7 @@
 import numpy as np
 import cv2
+from helper.crop import crop
+import matplotlib.pyplot as plt
 from models.DataNaiveBayes import DataNaiveBayes
 
 class kernel:
@@ -191,6 +193,28 @@ class kernel:
 			return(str(sehat) +" "+str(early)+" "+str(late))
 
 		return (str(sehat) +" "+str(early)+" "+str(late))
+
+	def faseKentang(penyakit,data):
+		path = crop.removeBackground(data)
+		rgb = np.average(path,axis=0)
+		rgb = np.average(rgb,axis=0)
+		if penyakit=="early":
+			if rgb[1]-rgb[0]>28:
+				if rgb[2]>rgb[1]:
+					fase = "intermediate"
+				else:
+					fase = "awal"
+			else:
+				fase = "awal"
+		elif penyakit == "late":
+			if rgb[1]-rgb[2]<5 or rgb[1]<173:
+				fase = "parah"
+			else:
+				fase = "awal"
+		else :
+			fase = "-"
+
+		return fase
 
 	def clasifierStDeviasi(nilai):
 		nilai = float (nilai)

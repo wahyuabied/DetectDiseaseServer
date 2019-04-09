@@ -77,7 +77,7 @@ def create_new_folder(local_dir):
 
 @app.route("/api/feature-extraction-kentang",methods=['POST'])
 def featureDetection():
-	regularPath = 'static/images/'
+	# regularPath = 'static/images/'
 	app.logger.info(app.config['UPLOAD_FOLDER'])
 	img = request.files['image']
 	img_name = secure_filename(img.filename)
@@ -101,11 +101,15 @@ def featureDetection():
 
 	data = [early,sehat,late]
 	dataTraining = kernel.naiveBayesData(data)
+
 	dataTest = []
 	dataTest.append(kernel.clasifierMean(mean))
 	dataTest.append(kernel.clasifierMedian(median))
 	dataTest.append(kernel.clasifierStDeviasi(stDev))
 	hasil = kernel.naiveBayes(dataTest,dataTraining)
+
+	fase = kernel.faseKentang(hasil,saved_path)
+	os.remove(saved_path+".png")
 
 	return jsonify(
 		saved_path = saved_path,
@@ -113,6 +117,7 @@ def featureDetection():
 		standart_deviasi = stDev,
 		median = median,
 		penyakit = hasil,
+		fase = fase,
     )
 
 @app.route("/api/feature-extraction-tomat",methods=['POST'])

@@ -129,7 +129,6 @@ class Db:
 				'deskripsi':result[x]['deskripsi'],
 				'gambar': result[x]['gambar'],
 				'url':result[x]['url']
-
 			}
 			allPestisida.append(penyakit)
 		return allPestisida	

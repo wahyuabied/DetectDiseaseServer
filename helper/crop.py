@@ -63,7 +63,7 @@ class crop:
 
 	    final = background + img1
 	    # dst = final[y:y+h, x:x+w]
-	    cv2.imwrite(imgo,final)
+	    cv2.imwrite(imgo+".png",final)
 
 	    return final
 
