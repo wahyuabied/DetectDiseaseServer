@@ -27,7 +27,6 @@ class crop:
 		dst = img[y:y+h, x:x+w]
 		# cv2.imshow('show',dst)
 		# location = str(temp)+path
-
 		# location = temp+path
 		resize = cv2.resize(dst,(256,256))
 		cv2.imwrite(path,resize)
@@ -47,7 +46,6 @@ class crop:
 	    cv2.grabCut(img,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)
 	    mask = np.where((mask==2)|(mask==0),0,1).astype('uint8')
 	    img1 = img*mask[:,:,np.newaxis]
-	    # cv2.imshow('potong', img1)
 	    newmask = color.rgb2gray(img)
 
 	    mask[newmask == 0] = 0

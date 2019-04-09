@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+	
+	<!-- Home -->
+
+	<div class="home">
+		<div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="{{url_for('static',filename='ui/images/home.jpg')}}" data-speed="0.8"></div>
+		<div class="home_container">
+			<div class="container">
+				<div class="row">
+					<div class="col">
+						<div class="home_content text-center">
+							<div class="home_subtitle page_subtitle">Detect Disease</div>
+							<div class="home_title"><h1>Aplikasi Pintar Pendeteksi Penyakit Tanaman</h1></div>
+							<div class="home_text ml-auto mr-auto">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="scroll_icon"></div>
+	</div>
+
+	<!-- Intro -->
+
+	<div id="about" class="intro">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<div class="intro_content">
+						<div class="intro_subtitle page_subtitle">Something new</div>
+						<div class="intro_title"><h2>Detect Disease</h2></div>
+						<div class="intro_text">
+							<p>Tidak hanya mendeteksi penyakit pada tanaman kentang dan tomat saja, detect disease juga memberi solusi untuk penyakit yang dideteksi. Kami telah bertanya pada petani secara langsung untuk menangani penyakit Early Blight dan Late Blight. Salusi pun terdiri 2 jenis yaitu solusi secara alami dan secara kimiawi</p>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xl-4 col-md-6 intro_col">
+							<div class="intro_image"><img src="{{url_for('static',filename='ui/images/intro_1.jpg')}}" alt="https://unsplash.com/@quanle2819"></div>
+						</div>
+						<div class="col-xl-4 col-md-6 intro_col">
+							<div class="intro_image"><img src="{{url_for('static',filename='ui/images/intro_2.jpg')}}" alt="https://unsplash.com/@fabmag"></div>
+						</div>
+					</div>
+				</div>	
+			</div>
+		</div>
+	</div>
+
+	<!-- Video -->
+
+	<div id="video" class="video_section">
+		<div class="background_image" style="background-image:url({{url_for('static',filename='ui/images/video.jpg')}}"></div>
+		<div class="video_section_content d-flex flex-column align-items-center justify-content-center text-center">
+			<div class="video_section_title">Food for the soul</div>
+			<div class="video_section_icon"><a class="vimeo video_button" href="https://player.vimeo.com/video/99340873?autoplay=1&loop=1&title=0&autopause=0"><i class="fa fa-play" aria-hidden="true"></i></a></div>
+		</div>
+	</div>
+
+	<!-- Signature Dish -->
+
+	<div id="pestisida" class="sig">
+		<div class="sig_content_container">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-7">
+						<div class="sig_content">
+							<div class="sig_subtitle page_subtitle">Something new</div>
+							<div class="sig_title"><h1>Penjualan dan Petunjuk Pestisida</h1></div>
+							<div class="rating_r sig_rating rating_r_5"><i></i><i></i><i></i><i></i><i></i></div>
+							<div class="sig_name_container d-flex flex-row align-items-start justify-content-start">
+								<div class="sig_name">Terhubung dengan TOKOPEDIA(OnProgress)</div>
+								
+							</div>
+							<div class="sig_content_list">
+								<ul class="d-flex flex-row align-items-center justify-content-start">
+									<li>CabrioTOP</li>
+									<li>Acrobat</li>
+									<li>Ludion</li>
+									<li>Polycom</li>
+									<li>......</li>
+								</ul>
+							</div>
+							<div class="button sig_button trans_200"><a href="#">Download Aplikasi(OP)</a></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="sig_image_container">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-7 offset-lg-5">
+						<div class="sig_image">
+							<div class="background_image" 
+							style="background-image:url({{url_for('static',filename='ui/images/sig.jpg')}}">
+							</div>
+							<img src="{{url_for('static',filename='ui/images/sig.jpg')}}" alt="">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- The Menu -->
+
+	<div id="pengetahuan" class="themenu">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<div class="themenu_title_bar_container">
+						<div class="themenu_stars text-center page_subtitle">5 Stars</div>
+						<div class="themenu_rating text-center">
+							<div class="rating_r rating_r_5"><i></i><i></i><i></i><i></i><i></i></div>
+						</div>
+						<div class="themenu_title_bar d-flex flex-column align-items-center justify-content-center">
+							<div class="themenu_title">Penuh dengan pengetahuan</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row themenu_row">
+
+				<!-- Starters -->
+				<div class="col-lg-6 themenu_column">
+					<div class="themenu_col">
+						<div class="themenu_col_title">Penyakit</div>
+						<div class="dish_list">
+							<img width="500px" src="{{url_for('static',filename='ui/images/penyakit.png')}}" alt="">
+						</div>
+					</div>
+				</div>
+
+				
+
+				<!-- Deserts -->
+				<div class="col-lg-6 themenu_column">
+					<div class="themenu_col">
+						<div class="themenu_col_title">Pestisida</div>
+						<div class="dish_list">
+							<img width="500px" src="{{url_for('static',filename='ui/images/pestisida.png')}}" alt="">
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>		
+	</div>
+
+	
+{% endblock %}
+	<!-- Footer -->
+

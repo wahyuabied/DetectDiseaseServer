@@ -22,7 +22,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route("/")
 def home():
-    return "Hello, World!"
+    return render_template('index.html')
 
 @app.route("/api/get-penyakit")
 def penyakit():
