@@ -18,43 +18,43 @@ from mpl_toolkits import mplot3d
 
 if __name__ == '__main__': 
 	#getData from DB
-	# id_kondisi=-1
-	# path=[]
-	# path.append('tomat/early/')
-	# path.append('tomat/late/')
-	# path.append('tomat/sehat/')
-	for y in range(0,8):
-		image = kernel.faseKentang('('+str(y+1)+').jpg')
+	id_kondisi=-1
+	path=[]
+	path.append('tomat/early/')
+	path.append('tomat/late/')
+	path.append('tomat/sehat/')
+	# for y in range(0,8):
+	# 	image = kernel.faseKentang('('+str(y+1)+').jpg')
 
-	# ##for getting data training
-	# mean = np.zeros((len(path),40))
-	# median = np.zeros((len(path),40))
-	# sDeviation = np.zeros((len(path),40))
+	##for getting data training
+	mean = np.zeros((len(path),40))
+	median = np.zeros((len(path),40))
+	sDeviation = np.zeros((len(path),40))
 
-	# for y in range(0,len(path)):
-	# 	for x in range(0,40):
-	# 		imgs = cv2.imread(path[y]+'('+str(x+1)+').jpg')
-	# 		img = crop.removeBackgroundTraining(path[y],'('+str(x+1)+')',imgs)
-	# 		readyImages = cv2.imread('noBackground/'+path[y]+'('+str(x+1)+').PNG',0)
-	# 		#Cropping
-	# 		# location = crop.cropping(path[y],'('+str(x+1)+').jpg')
-	# 		# img = cv2.imread(location,0)
-	# 		# cv2.imshow('imageReal', img)
-	# 		filters = kernel.getKernel()
-	# 		res1 = kernel.gaborFiltering(readyImages, filters)
-	# 		mean[y][x]=kernel.getMean(res1)
-	# 		sDeviation[y][x]=kernel.getSDeviate(res1)
-	# 		median[y][x]=kernel.getMedian(res1)
+	for y in range(0,len(path)):
+		for x in range(0,40):
+			imgs = cv2.imread(path[y]+'('+str(x+1)+').jpg')
+			img = crop.removeBackgroundTraining(path[y],'('+str(x+1)+')',imgs)
+			readyImages = cv2.imread('noBackground/'+path[y]+'('+str(x+1)+').PNG',0)
+			#Cropping
+			# location = crop.cropping(path[y],'('+str(x+1)+').jpg')
+			# img = cv2.imread(location,0)
+			# cv2.imshow('imageReal', img)
+			filters = kernel.getKernelTomat()
+			res1 = kernel.gaborFiltering(readyImages, filters)
+			mean[y][x]=kernel.getMean(res1)
+			sDeviation[y][x]=kernel.getSDeviate(res1)
+			median[y][x]=kernel.getMedian(res1)
 			
-	# for y in range(0,len(path)):
-	# 	id_kondisi=id_kondisi+2
-	# 	for x in range(0,40):
-	# 		Db.insert_crop_tomat(path[y]+'('+str(x+1)+').jpg',id_kondisi,1.5,sDeviation[y][x],median[y][x],mean[y][x])
+	for y in range(0,len(path)):
+		id_kondisi=id_kondisi+2
+		for x in range(0,40):
+			Db.insert_crop_tomat(path[y]+'('+str(x+1)+').jpg',id_kondisi,1.5,sDeviation[y][x],median[y][x],mean[y][x])
 			
 
-	# sehat=Db.selectData(5)
-	# early=Db.selectData(1)
-	# late=Db.selectData(3)
+	sehat=Db.selectDataTomat(5)
+	early=Db.selectDataTomat(1)
+	late=Db.selectDataTomat(3)
 	# outlier=Db.selectData(6)
 
 	# data = [early,sehat,late]
@@ -122,41 +122,41 @@ if __name__ == '__main__':
 	# 	Db.editData(deleteSehatId[a])
 
 
-# #	Menampilkan grafik
-# 	dataX = []
-# 	dataY = []
-# 	dataZ = []
-# 	for ear in early:
-# 		dataX.append(float(ear.getStDeviasi()))
-# 		dataY.append(float(ear.getMean()))
-# 		dataZ.append(float(ear.getMedian()))
-# 	dataXS = []
-# 	dataYS = []
-# 	dataZS = []
-# 	for sht in sehat:
-# 		dataXS.append(float(sht.getStDeviasi()))
-# 		dataYS.append(float(sht.getMean()))
-# 		dataZS.append(float(sht.getMedian()))
-# 	dataXL = []
-# 	dataYL = []
-# 	dataZL = []
-# 	for lte in late:
-# 		dataXL.append(float(lte.getStDeviasi()))
-# 		dataYL.append(float(lte.getMean()))
-# 		dataZL.append(float(lte.getMedian()))
-# 	# dataOX = []
-# 	# dataOY = []
-# 	# for out in outlier:
-# 	# 	dataOX.append(float(out.getStDeviasi()))
-# 	# 	dataOY.append(float(out.getMean()))
+#	Menampilkan grafik
+	dataX = []
+	dataY = []
+	dataZ = []
+	for ear in early:
+		dataX.append(float(ear.getStDeviasi()))
+		dataY.append(float(ear.getMean()))
+		dataZ.append(float(ear.getMedian()))
+	dataXS = []
+	dataYS = []
+	dataZS = []
+	for sht in sehat:
+		dataXS.append(float(sht.getStDeviasi()))
+		dataYS.append(float(sht.getMean()))
+		dataZS.append(float(sht.getMedian()))
+	dataXL = []
+	dataYL = []
+	dataZL = []
+	for lte in late:
+		dataXL.append(float(lte.getStDeviasi()))
+		dataYL.append(float(lte.getMean()))
+		dataZL.append(float(lte.getMedian()))
+	# dataOX = []
+	# dataOY = []
+	# for out in outlier:
+	# 	dataOX.append(float(out.getStDeviasi()))
+	# 	dataOY.append(float(out.getMean()))
 	
-# 	plt.plot(dataX, dataY, 'ro',dataXS,dataYS,'go',dataXL,dataYL,'bo')
-# 	# ax = plt.axes(projection='3d')
-# 	# ax.scatter3D(dataX, dataY, dataZ, c=dataZ, cmap='Reds');
-# 	# ax.scatter3D(dataXS, dataYS, dataZS, c=dataZS, cmap='Greens');
-# 	# ax.scatter3D(dataXL, dataYL, dataZL, c=dataZL, cmap='Blues');
-# 	# plt.plot(dataX, dataY, 'ro',dataXS,dataYS,'go',dataXL,dataYL,'bo',dataOX,dataOY,'ko')
-# 	plt.show()
+	plt.plot(dataX, dataY, 'ro',dataXS,dataYS,'go',dataXL,dataYL,'bo')
+	# ax = plt.axes(projection='3d')
+	# ax.scatter3D(dataX, dataY, dataZ, c=dataZ, cmap='Reds');
+	# ax.scatter3D(dataXS, dataYS, dataZS, c=dataZS, cmap='Greens');
+	# ax.scatter3D(dataXL, dataYL, dataZL, c=dataZL, cmap='Blues');
+	# plt.plot(dataX, dataY, 'ro',dataXS,dataYS,'go',dataXL,dataYL,'bo',dataOX,dataOY,'ko')
+	plt.show()
 
 	
 

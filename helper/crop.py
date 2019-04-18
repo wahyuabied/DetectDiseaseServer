@@ -121,6 +121,6 @@ class crop:
 	    img.save(path+nameFile+".png", "PNG")
 		
 	    # dst = final[y:y+h, x:x+w]
-	    cv2.imwrite("noBack/"+path+name,final)
+	    # cv2.imwrite("noBack/"+path+name,final)
 
-	    return final
+	    # return final
