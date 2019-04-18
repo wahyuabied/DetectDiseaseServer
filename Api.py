@@ -23,10 +23,8 @@ if __name__ == '__main__':
 	# path.append('tomat/early/')
 	# path.append('tomat/late/')
 	# path.append('tomat/sehat/')
-	# # # image = cv2.imread('1.jpg')
-	# # # image_resize = cv2.resize(image,(256,256))
-	# # # result = crop.removeBackground(image_resize)
-	# # # cv2.imshow('result.jpg', result)
+	for y in range(0,8):
+		image = kernel.faseKentang('('+str(y+1)+').jpg')
 
 	# ##for getting data training
 	# mean = np.zeros((len(path),40))
@@ -54,10 +52,10 @@ if __name__ == '__main__':
 	# 		Db.insert_crop_tomat(path[y]+'('+str(x+1)+').jpg',id_kondisi,1.5,sDeviation[y][x],median[y][x],mean[y][x])
 			
 
-	sehat=Db.selectDataTomat(5)
-	early=Db.selectDataTomat(1)
-	late=Db.selectDataTomat(3)
-	outlier=Db.selectDataTomat(6)
+	# sehat=Db.selectData(5)
+	# early=Db.selectData(1)
+	# late=Db.selectData(3)
+	# outlier=Db.selectData(6)
 
 	# data = [early,sehat,late]
 	# # print(data[0][0].getMedian())
@@ -124,41 +122,41 @@ if __name__ == '__main__':
 	# 	Db.editData(deleteSehatId[a])
 
 
-#	Menampilkan grafik
-	dataX = []
-	dataY = []
-	dataZ = []
-	for ear in early:
-		dataX.append(float(ear.getStDeviasi()))
-		dataY.append(float(ear.getMean()))
-		dataZ.append(float(ear.getMedian()))
-	dataXS = []
-	dataYS = []
-	dataZS = []
-	for sht in sehat:
-		dataXS.append(float(sht.getStDeviasi()))
-		dataYS.append(float(sht.getMean()))
-		dataZS.append(float(sht.getMedian()))
-	dataXL = []
-	dataYL = []
-	dataZL = []
-	for lte in late:
-		dataXL.append(float(lte.getStDeviasi()))
-		dataYL.append(float(lte.getMean()))
-		dataZL.append(float(lte.getMedian()))
-	# dataOX = []
-	# dataOY = []
-	# for out in outlier:
-	# 	dataOX.append(float(out.getStDeviasi()))
-	# 	dataOY.append(float(out.getMean()))
+# #	Menampilkan grafik
+# 	dataX = []
+# 	dataY = []
+# 	dataZ = []
+# 	for ear in early:
+# 		dataX.append(float(ear.getStDeviasi()))
+# 		dataY.append(float(ear.getMean()))
+# 		dataZ.append(float(ear.getMedian()))
+# 	dataXS = []
+# 	dataYS = []
+# 	dataZS = []
+# 	for sht in sehat:
+# 		dataXS.append(float(sht.getStDeviasi()))
+# 		dataYS.append(float(sht.getMean()))
+# 		dataZS.append(float(sht.getMedian()))
+# 	dataXL = []
+# 	dataYL = []
+# 	dataZL = []
+# 	for lte in late:
+# 		dataXL.append(float(lte.getStDeviasi()))
+# 		dataYL.append(float(lte.getMean()))
+# 		dataZL.append(float(lte.getMedian()))
+# 	# dataOX = []
+# 	# dataOY = []
+# 	# for out in outlier:
+# 	# 	dataOX.append(float(out.getStDeviasi()))
+# 	# 	dataOY.append(float(out.getMean()))
 	
-	plt.plot(dataX, dataY, 'ro',dataXS,dataYS,'go',dataXL,dataYL,'bo')
-	# ax = plt.axes(projection='3d')
-	# ax.scatter3D(dataX, dataY, dataZ, c=dataZ, cmap='Reds');
-	# ax.scatter3D(dataXS, dataYS, dataZS, c=dataZS, cmap='Greens');
-	# ax.scatter3D(dataXL, dataYL, dataZL, c=dataZL, cmap='Blues');
-	# plt.plot(dataX, dataY, 'ro',dataXS,dataYS,'go',dataXL,dataYL,'bo',dataOX,dataOY,'ko')
-	plt.show()
+# 	plt.plot(dataX, dataY, 'ro',dataXS,dataYS,'go',dataXL,dataYL,'bo')
+# 	# ax = plt.axes(projection='3d')
+# 	# ax.scatter3D(dataX, dataY, dataZ, c=dataZ, cmap='Reds');
+# 	# ax.scatter3D(dataXS, dataYS, dataZS, c=dataZS, cmap='Greens');
+# 	# ax.scatter3D(dataXL, dataYL, dataZL, c=dataZL, cmap='Blues');
+# 	# plt.plot(dataX, dataY, 'ro',dataXS,dataYS,'go',dataXL,dataYL,'bo',dataOX,dataOY,'ko')
+# 	plt.show()
 
 	
 
