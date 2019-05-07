@@ -111,11 +111,12 @@ def featureDetection():
 	app.logger.info("saving {}".format(saved_path))
 	img.save(saved_path)
 	os.chmod(saved_path, 0o755)
-	#autoLevel
-	autoLevel = kernel.autoLevel(cv2.imread(saved_path,0))
-	cv2.imwrite(saved_path,autolevel)
 	#Remove background
 	location = crop.cropping(saved_path)
+	#autoLevel
+	autoLevel = kernel.autoLevel(cv2.imread(location,0))
+	cv2.imwrite(location,autoLevel)
+
 	img = cv2.imread(location,0)
 	filters = kernel.getKernel()
 	res1 = kernel.gaborFiltering(img, filters)
