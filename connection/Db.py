@@ -141,7 +141,8 @@ class Db:
 				'nama':result[x]['nama'],
 				'deskripsi':result[x]['deskripsi'],
 				'gambar': result[x]['gambar'],
-				'url':result[x]['url']
+				'url':result[x]['url'],
+				'tokopedia_search':result[x]['tokopedia_search']
 			}
 			allPestisida.append(penyakit)
 		return allPestisida

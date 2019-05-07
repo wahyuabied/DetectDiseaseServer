@@ -14,15 +14,35 @@ class kernel:
 
 	def getKernel():
 		filters = []
-		ksize = 31  #31
-		scale  = [kernel.frequency_to_lamda(0.06),kernel.frequency_to_lamda(0.09),kernel.frequency_to_lamda(0.13),kernel.frequency_to_lamda(0.18),kernel.frequency_to_lamda(0.25)]#frequency
+		ksize = 31
+		scale  = [kernel.frequency_to_lamda(0.06),kernel.frequency_to_lamda(0.09),kernel.frequency_to_lamda(0.13),kernel.frequency_to_lamda(0.18),kernel.frequency_to_lamda(0.25)] #skalanya ditambah lagi
 		theta = [kernel.degree(0),kernel.degree(30),kernel.degree(45),kernel.degree(60),kernel.degree(90),kernel.degree(120),kernel.degree(135),kernel.degree(150)]
 		for i in np.arange(0, len(theta),1):
 			for j in np.arange(0,len(scale),1):
 			 	kern = cv2.getGaborKernel((ksize, ksize), 3.0,theta[i], scale[j], 0.5, 0, ktype=cv2.CV_32F)
-			 	# resized_image = cv2.resize(kern, (200, 200))
-			 	# cv2.imshow('kernel'+str(i)+str(j), kern)
-			 	# cv2.imshow('kernel'+str(i), kern)
+		 		kern /= 1.5*kern.sum()
+		 		filters.append(kern)
+		return filters
+
+
+#dokumentasi
+#jika jarak scale diperkecil maka gambar semakin geser kekiri dan jarak biru semakin menadekat ke hjau
+	def getKernelTomat():
+		filters = []
+		ksize = 31  #31 == dicoba ke 49(ukuran yang palingn banyak dipakai) => semakin besar size 
+		scale  = [kernel.frequency_to_lamda(0.06),kernel.frequency_to_lamda(0.09),kernel.frequency_to_lamda(0.13),kernel.frequency_to_lamda(0.18),kernel.frequency_to_lamda(0.21),kernel.frequency_to_lamda(0.25)]
+		#ini 0.06 nya ini adalah 6/100 nya
+		# theta = [kernel.degree(0),kernel.degree(10),kernel.degree(20),kernel.degree(30),kernel.degree(40),kernel.degree(50),kernel.degree(60),kernel.degree(70)
+		# ,kernel.degree(80),kernel.degree(90),kernel.degree(100),kernel.degree(110),kernel.degree(120),kernel.degree(130),kernel.degree(140),kernel.degree(150)
+		# ,kernel.degree(160),kernel.degree(170)]
+		theta = [kernel.degree(0),kernel.degree(30),kernel.degree(45),kernel.degree(57),kernel.degree(60),kernel.degree(90),kernel.degree(120),kernel.degree(135),kernel.degree(150)]
+		# theta = [kernel.degree(0),kernel.degree(23),kernel.degree(45),kernel.degree(68),kernel.degree(90),kernel.degree(113),kernel.degree(135),kernel.degree(158)]
+		# orientasi dimainnkan untuk memperbaiki nilainya(paling baik 1 radint (57 derajat) atau 1/3 radiant atau phi radiant)
+		# untuk tomat memakai 7 scala dan 15 orientasi atau menggunakan kelipatan 10 untuk thetanya
+		for i in np.arange(0, len(theta),1):
+			for j in np.arange(0,len(scale),1):
+			 	kern = cv2.getGaborKernel((ksize, ksize), 3.0,theta[i], scale[j], 0.5, 0, ktype=cv2.CV_32F)
+			 	#untuk menentukan angka tinggi sedang dan rendah nya kita pakai kuartil atau fuzzy
 		 		kern /= 1.5*kern.sum()
 		 		filters.append(kern)
 		return filters
