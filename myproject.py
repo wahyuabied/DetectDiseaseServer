@@ -37,12 +37,8 @@ def pestisida():
 	pestisida = Db.getPestisida()
 	return jsonify(pestisida)
 
-@app.route("/api/Graph-Disease",methods=['POST'])
+@app.route("/api/Graph-Disease",methods=['GET'])
 def graph():
-
-	stDeviasi = request.form['standart_deviasi']
-	mean = request.form['mean']
-	median = request.form['median']
 
 	sehat=Db.selectData(5)
 	early=Db.selectData(1)
@@ -110,12 +106,8 @@ def featureDetection():
 	app.logger.info("saving {}".format(saved_path))
 	img.save(saved_path)
 	os.chmod(saved_path, 0o755)
-	#Remove background
+	
 	location = crop.cropping(saved_path)
-	#autoLevel
-	autoLevel = kernel.autoLevel(cv2.imread(location,0))
-	cv2.imwrite(location,autoLevel)
-
 	img = cv2.imread(location,0)
 	filters = kernel.getKernel()
 	res1 = kernel.gaborFiltering(img, filters)
