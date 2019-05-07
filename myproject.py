@@ -8,9 +8,11 @@ import numpy as np
 import cv2
 from models.Penyakit import Penyakit
 from connection.Db import Db
-from helper import stat as stat
 from helper.kernel import kernel
 from helper.crop import crop
+import matplotlib.pyplot as plt
+from mpl_toolkits import mplot3d
+
 #import matplotlib.pyplot as plt
 
 
@@ -18,7 +20,9 @@ app = Flask(__name__)
 
 PROJECT_HOME = os.path.dirname(os.path.realpath(__file__))
 UPLOAD_FOLDER = '{}/static/images/'.format(PROJECT_HOME)
+UPLOAD_GRAPH = '{}/static/graph/'.format(PROJECT_HOME)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['UPLOAD_GRAPH'] = UPLOAD_GRAPH
 
 @app.route("/")
 def home():
@@ -34,26 +38,51 @@ def pestisida():
 	pestisida = Db.getPestisida()
 	return jsonify(pestisida)
 
-@app.route("/api/Graph-Disease",methods=['GET'])
+@app.route("/api/Graph-Disease",methods=['POST'])
 def graph():
+
+	stDeviasi = request.form['standart_deviasi']
+	mean = request.form['mean']
+	median = request.form['median']
+
 	sehat=Db.selectData(5)
 	early=Db.selectData(1)
 	late=Db.selectData(3)
 	dataX = []
 	dataY = []
+	dataZ = []
 	for ear in early:
 		dataX.append(float(ear.getStDeviasi()))
 		dataY.append(float(ear.getMean()))
+		dataZ.append(float(ear.getMedian()))
 	dataXS = []
 	dataYS = []
+	dataZS = []
 	for sht in sehat:
 		dataXS.append(float(sht.getStDeviasi()))
 		dataYS.append(float(sht.getMean()))
+		dataZS.append(float(sht.getMedian()))
 	dataXL = []
 	dataYL = []
+	dataZL = []
 	for lte in late:
 		dataXL.append(float(lte.getStDeviasi()))
 		dataYL.append(float(lte.getMean()))
+		dataZL.append(float(lte.getMedian()))
+
+	# ax = plt.axes(projection='3d')
+	# ax.scatter3D(dataX, dataY, dataZ, c=dataZ, cmap='Reds');
+	# ax.scatter3D(dataXS, dataYS, dataZS, c=dataZS, cmap='Greens');
+	# ax.scatter3D(dataXL, dataYL, dataZL, c=dataZL, cmap='Blues');
+	# # ax.scatter3D(stDeviasi,mean,median, median, cmap='Yellows')
+
+	# app.logger.info(app.config['UPLOAD_GRAPH'])
+	# saved_path = os.path.join(app.config['UPLOAD_GRAPH'], "image.png")
+	# plt.savefig(saved_path)
+
+	# return jsonify(url = saved_path,
+	# 	datatype=str(type(dataX[1]))
+		)
 
 	return jsonify(
 		sehat_x = dataXS,
@@ -64,10 +93,6 @@ def graph():
 		late_y = dataYL
     )
 
-	# plt.plot(dataX, dataY, 'ro',dataXS,dataYS,'go',dataXL,dataYL,'bo')
-	# plt.savefig("static/"+images_fname)
-
-	# return render_template('graph.html', plot_url=images_fname)
 
 def create_new_folder(local_dir):
 	newpath = local_dir
@@ -86,7 +111,10 @@ def featureDetection():
 	app.logger.info("saving {}".format(saved_path))
 	img.save(saved_path)
 	os.chmod(saved_path, 0o755)
-
+	#autoLevel
+	autoLevel = kernel.autoLevel(cv2.imread(saved_path,0))
+	cv2.imwrite(saved_path,autolevel)
+	#Remove background
 	location = crop.cropping(saved_path)
 	img = cv2.imread(location,0)
 	filters = kernel.getKernel()
