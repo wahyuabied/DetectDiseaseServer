@@ -1,4 +1,3 @@
-
 import  sys, os, logging,json
 sys.path.insert(0, '/~/myproject/')
 from flask import Flask, redirect,render_template, url_for,request,jsonify
@@ -82,7 +81,7 @@ def graph():
 
 	# return jsonify(url = saved_path,
 	# 	datatype=str(type(dataX[1]))
-		)
+
 
 	return jsonify(
 		sehat_x = dataXS,
@@ -190,4 +189,4 @@ def featureDetectionTomat():
     )
 
 if __name__ == "__main__":
-    app.run(debug=True,host='127.0.0.1',port = 5000)
+    app.run(host='0.0.0.0')

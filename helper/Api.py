@@ -54,9 +54,26 @@ if __name__ == '__main__':
 	# 		Db.insert_crop_tomat('cropTomat/'+path[y]+'('+str(x+1)+').jpg',id_kondisi,1.5,sDeviation[y][x],median[y][x],mean[y][x])
 			
 
-	sehat=Db.selectDataTomat(5)
-	early=Db.selectDataTomat(1)
-	late=Db.selectDataTomat(3)
+	sehat=Db.selectData(5)
+	early=Db.selectData(1)
+	late=Db.selectData(3)
+	outlier=Db.selectData(6)
+
+	data = [early,sehat,late]
+	# print(data[0][0].getMedian())
+	dataTraining = kernel.naiveBayesData(data)
+
+	for y in range(0,len(path)):
+		for x in range (0,46):
+			dataTest = []
+			dataTest.append(kernel.clasifierMean(mean[y][x]))
+			dataTest.append(kernel.clasifierMedian(median[y][x]))
+			dataTest.append(kernel.clasifierStDeviasi(sDeviation[y][x]))
+			print(str(mean[y][x])+str(median[y][x])+str(sDeviation[y][x]))
+			print(kernel.naiveBayes(dataTest,dataTraining))
+	# sehat=Db.selectDataTomat(5)
+	# early=Db.selectDataTomat(1)
+	# late=Db.selectDataTomat(3)
 	# outlier=Db.selectData(6)
 
 	# data = [early,sehat,late]
@@ -93,7 +110,7 @@ if __name__ == '__main__':
 	# mean = kernel.normalize(mean)
 	# sDeviation = kernel.normalize(sDeviation)
 	# median = kernel.normalize(median)
-	
+
 	##insert database
 	# for y in range(0,len(path)):
 	# 	id_kondisi=id_kondisi+2
@@ -116,7 +133,7 @@ if __name__ == '__main__':
 	# 	if float(late[z].getMedian()) < outlierLate[0] or float(late[z].getMedian()) > outlierLate[1]:
 	# 		deleteLateId.append(late[z].getId())
 	# 	if float(sehat[z].getMedian()) < outlierSehat[0] or float(sehat[z].getMedian()) > outlierSehat[1]:
-	# 		deleteSehatId.append(sehat[z].getId())			
+	# 		deleteSehatId.append(sehat[z].getId())
 
 	# for a in range(0, len(deleteEarlyId)):
 	# 	Db.editData(deleteEarlyId[a])
@@ -151,7 +168,7 @@ if __name__ == '__main__':
 	# for out in outlier:
 	# 	dataOX.append(float(out.getStDeviasi()))
 	# 	dataOY.append(float(out.getMean()))
-	
+
 	plt.plot(dataX, dataY, 'ro',dataXS,dataYS,'go',dataXL,dataYL,'bo')
 	# ax = plt.axes(projection='3d')
 	# ax.scatter3D(dataX, dataY, dataZ, c=dataZ, cmap='Reds');
@@ -160,7 +177,7 @@ if __name__ == '__main__':
 	# plt.plot(dataX, dataY, 'ro',dataXS,dataYS,'go',dataXL,dataYL,'bo',dataOX,dataOY,'ko')
 	plt.show()
 
-	
+
 
 	cv2.waitKey(0)
 	cv2.destroyAllWindows()

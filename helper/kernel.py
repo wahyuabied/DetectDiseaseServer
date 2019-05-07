@@ -221,16 +221,16 @@ class kernel:
 		if penyakit=="early":
 			if rgb[1]-rgb[0]>28:
 				if rgb[2]>rgb[1]:
-					fase = "intermediate"
+					fase = "Parah"
 				else:
-					fase = "awal"
+					fase = "Awal Penyakit"
 			else:
-				fase = "awal"
+				fase = "Awal Penyakit"
 		elif penyakit == "late":
 			if rgb[1]-rgb[2]<5 or rgb[1]<173:
-				fase = "parah"
+				fase = "Parah"
 			else:
-				fase = "awal"
+				fase = "Awal Penyakit"
 		else :
 			fase = "-"
 
@@ -305,7 +305,3 @@ class kernel:
 
 	def autoLevel(data):
 		return cv2.equalizeHist(data)
-		
-
-
-

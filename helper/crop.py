@@ -5,6 +5,7 @@ from skimage import color
 from PIL import Image
 import os
 
+
 class crop:
 	
 	def cropping(path):
@@ -36,17 +37,15 @@ class crop:
 	    height, width = img.shape[:2]
 
 	    mask = np.zeros(img.shape[:2],np.uint8)
-		
+
 	    bgdModel = np.zeros((1,65),np.float64)
 	    fgdModel = np.zeros((1,65),np.float64)
 
-		#Hard Coding the Rect The object must lie within this rect.
+	   #Hard Coding the Rect The object must lie within this rect.
 	    rect = (15,15,width-30,height-30)
 	    cv2.grabCut(img,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)
 	    mask = np.where((mask==2)|(mask==0),0,1).astype('uint8')
 	    img1 = img*mask[:,:,np.newaxis]
-	  
-	    
 	    newmask = color.rgb2gray(img)
 
 	    mask[newmask == 0] = 0
@@ -72,7 +71,7 @@ class crop:
 	    height, width = imgo.shape[:2]
 
 	    mask = np.zeros(imgo.shape[:2],np.uint8)
-		
+
 	    bgdModel = np.zeros((1,65),np.float64)
 	    fgdModel = np.zeros((1,65),np.float64)
 
@@ -81,8 +80,6 @@ class crop:
 	    cv2.grabCut(imgo,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)
 	    mask = np.where((mask==2)|(mask==0),0,1).astype('uint8')
 	    img1 = imgo*mask[:,:,np.newaxis]
-	  
-	    
 	    newmask = color.rgb2gray(imgo)
 
 	    mask[newmask == 0] = 0
