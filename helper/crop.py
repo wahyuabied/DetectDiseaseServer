@@ -19,21 +19,20 @@ class crop:
 		morphed = cv2.morphologyEx(threshed, cv2.MORPH_CLOSE, kernel)
 
 		## (3) Max area
-		_, cnts, _ = cv2.findContours(morphed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+		#sekarang findCountour hanya mengembalikan contour dan hierarcy cnts, _ = 
+		# _, cnts, _ = cv2.findContours(morphed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) windows
+		cnts, _ = cv2.findContours(morphed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) #linux
 		cnt = sorted(cnts, key=cv2.contourArea)[-1]
 
 		## (4) Crop and save
 		x,y,w,h = cv2.boundingRect(cnt)
 		dst = img[y:y+h, x:x+w]
-		# cv2.imshow('show',dst)
-		# location = str(temp)+path
-		# location = temp+path
 		resize = cv2.resize(dst,(256,256))
 		cv2.imwrite(path,resize)
 		return path
 
 	def removeBackground(imgo):
-	    img = cv2.imread(imgo)
+	    img = cv2.imread(imgo,1)
 	    height, width = img.shape[:2]
 
 	    mask = np.zeros(img.shape[:2],np.uint8)
@@ -57,14 +56,11 @@ class crop:
 	    #crop background
 	    background = img - img1
 	    background[np.where((background > [0,0,0]).all(axis = 2))] = [255,255,255]
-	    # cv2.imshow('background', background)
-	    # background2 = crop.removeNoisy(background)
 
 	    final = background + img1
-	    # dst = final[y:y+h, x:x+w]
 	    cv2.imwrite(imgo+".png",final)
 
-	    return final
+	    return imgo+".png"
 
 	def removeBackgroundTraining(path,name,imgo):
 	    # cv2.imshow('awal', imgo)

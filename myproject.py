@@ -107,8 +107,15 @@ def featureDetection():
 	img.save(saved_path)
 	os.chmod(saved_path, 0o755)
 	
-	location = crop.cropping(saved_path)
-	img = cv2.imread(location,0)
+	if request.form['autoLevel']=="yes":
+		resize = cv2.resize(cv2.imread(saved_path),(256,256))
+		cv2.imwrite(saved_path,resize)
+		location = crop.removeBackground(saved_path)
+		img = kernel.autoLevel(cv2.imread(location,0))
+	else:
+		location = crop.cropping(saved_path)
+		img = cv2.imread(location,0)
+
 	filters = kernel.getKernel()
 	res1 = kernel.gaborFiltering(img, filters)
 	mean = kernel.getMean(res1)

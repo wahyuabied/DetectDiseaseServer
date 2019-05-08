@@ -215,7 +215,7 @@ class kernel:
 		return (str(sehat) +" "+str(early)+" "+str(late))
 
 	def faseKentang(penyakit,data):
-		path = crop.removeBackground(data)
+		path = cv2.imread(data,1)
 		rgb = np.average(path,axis=0)
 		rgb = np.average(rgb,axis=0)
 		if penyakit=="early":
