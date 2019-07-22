@@ -9,6 +9,9 @@ from models.Penyakit import Penyakit
 from connection.Db import Db
 from helper.kernel import kernel
 from helper.crop import crop
+import pandas as pd
+from sklearn.neighbors import KNeighborsClassifier
+import pickle
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 
@@ -65,19 +68,6 @@ def graph():
 		dataYL.append(float(lte.getMean()))
 		dataZL.append(float(lte.getMedian()))
 
-	# ax = plt.axes(projection='3d')
-	# ax.scatter3D(dataX, dataY, dataZ, c=dataZ, cmap='Reds');
-	# ax.scatter3D(dataXS, dataYS, dataZS, c=dataZS, cmap='Greens');
-	# ax.scatter3D(dataXL, dataYL, dataZL, c=dataZL, cmap='Blues');
-	# # ax.scatter3D(stDeviasi,mean,median, median, cmap='Yellows')
-
-	# app.logger.info(app.config['UPLOAD_GRAPH'])
-	# saved_path = os.path.join(app.config['UPLOAD_GRAPH'], "image.png")
-	# plt.savefig(saved_path)
-
-	# return jsonify(url = saved_path,
-	# 	datatype=str(type(dataX[1]))
-
 
 	return jsonify(
 		sehat_x = dataXS,
@@ -95,6 +85,59 @@ def create_new_folder(local_dir):
 		os.makedirs(newpath)
 	return newpath
 
+@app.route("/api/feature-extraction-tembakau",methods=['POST'])
+def featureDetectionTembakau():
+	app.logger.info(app.config['UPLOAD_FOLDER'])
+	img = request.files['image']
+	img_name = secure_filename(img.filename)
+	create_new_folder(app.config['UPLOAD_FOLDER'])
+	saved_path = os.path.join(app.config['UPLOAD_FOLDER'], img_name)
+	app.logger.info("saving {}".format(saved_path))
+	img.save(saved_path)
+	os.chmod(saved_path, 0o755)
+	resize = cv2.resize(cv2.imread(saved_path),(512,512))
+	cv2.imwrite(saved_path,resize)
+
+	img = cv2.imread(saved_path)
+	filters = kernel.getKernelTembakau()#119
+	res1 = kernel.gaborFiltering(img, filters)
+	mean = kernel.getMean(res1)/112.05
+	stDev = kernel.getSDeviate(res1)/112.81
+	median = kernel.getMedian(res1)/94
+
+	#data training
+	training=Db.selectDataTembakau()
+	dataTrain = []
+	for datum in training:    
+	    dataTrain.append([datum.getStDeviasi(),datum.getMean(),datum.getMedian(),datum.getLabel()])
+	dataTrain_df = pd.DataFrame(dataTrain,columns=["st_dev", "r", "median","label"]) 
+	trainX = dataTrain_df[["st_dev","r","median"]]
+	trainY = dataTrain_df["label"]
+	#data testing
+	dataTest = []
+	dataTest.append([stDev,mean,median,-1])
+
+	dataTest_df = pd.DataFrame(dataTest,columns=["st_dev", "r", "median","label"]) 
+	testX = dataTest_df[["st_dev","r","median"]]
+	testY = dataTest_df["label"]
+
+
+	knn3 = KNeighborsClassifier(n_neighbors = 5)
+
+	knn3.fit(trainX,trainY)
+	list_pickle_path = 'tembakau_data.pkl'
+	list_pickle = open(list_pickle_path, 'wb')
+	pickle.dump(knn3, list_pickle)
+	list_pickle.close()
+	list_unpickle = open(list_pickle_path, 'rb')
+	knn3 = pickle.load(list_unpickle)
+	predicting = knn3.predict(testX)
+
+	return jsonify(
+		hasil_prediksi = predicting[0]
+    )
+
+
 @app.route("/api/feature-extraction-kentang",methods=['POST'])
 def featureDetection():
 	# regularPath = 'static/images/'
@@ -106,14 +149,14 @@ def featureDetection():
 	app.logger.info("saving {}".format(saved_path))
 	img.save(saved_path)
 	os.chmod(saved_path, 0o755)
-	
+	resize = cv2.resize(cv2.imread(saved_path),(256,256))
+	cv2.imwrite(saved_path,resize)
+
 	if request.form['autoLevel']=="yes":
-		resize = cv2.resize(cv2.imread(saved_path),(256,256))
-		cv2.imwrite(saved_path,resize)
 		location = crop.removeBackground(saved_path)
-		img = kernel.autoLevel(cv2.imread(location,0))
+		img = kernel.autoLevel(cv2.imread(saved_path,0))
 	else:
-		location = crop.cropping(saved_path)
+		location = crop.crop(saved_path)
 		img = cv2.imread(location,0)
 
 	filters = kernel.getKernel()
@@ -136,7 +179,7 @@ def featureDetection():
 	hasil = kernel.naiveBayes(dataTest,dataTraining)
 
 	fase = kernel.faseKentang(hasil,saved_path)
-	os.remove(saved_path+".png")
+	# os.remove(saved_path+".png")
 
 	return jsonify(
 		saved_path = saved_path,
@@ -158,9 +201,16 @@ def featureDetectionTomat():
 	app.logger.info("saving {}".format(saved_path))
 	img.save(saved_path)
 	os.chmod(saved_path, 0o755)
+	resize = cv2.resize(cv2.imread(saved_path),(256,256))
+	cv2.imwrite(saved_path,resize)
 
-	img = crop.removeBackground(saved_path)
-	img = cv2.imread(saved_path,0)
+	if request.form['autoLevel']=="yes":
+		location = crop.removeBackground(saved_path)
+		img = kernel.autoLevel(cv2.imread(location,0))
+	else:
+		location = crop.removeBackground(saved_path)
+		img = cv2.imread(location,0)
+		
 	filters = kernel.getKernel()
 	res1 = kernel.gaborFiltering(img, filters)
 	mean = kernel.getMean(res1)
@@ -179,12 +229,15 @@ def featureDetectionTomat():
 	dataTest.append(kernel.clasifierStDeviasiTomat(stDev))
 	hasil = kernel.naiveBayes(dataTest,dataTraining)
 
+	fase = kernel.faseTomat(hasil,saved_path)
+
 	return jsonify(
 		saved_path = saved_path,
 		mean = mean,
 		standart_deviasi = stDev,
 		median = median,
 		penyakit = hasil,
+		fase = fase,
     )
 
 if __name__ == "__main__":

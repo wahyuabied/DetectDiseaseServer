@@ -1,5 +1,6 @@
 import pymysql.cursors
 from models.Data import Data
+from models.Tembakau import Tembakau
 from models.Penyakit import Penyakit
 from models.FeatureExtraction import FeatureExtraction
 
@@ -8,10 +9,10 @@ class Db:
 	def getConnection():
 	    return pymysql.connect(host='157.230.252.251',user='wahyuabied',password='wahyuabied',db='ta',charset='utf8mb4',cursorclass=pymysql.cursors.DictCursor)
 
-#	    return pymysql.connect(host='35.185.118.181',user='wahyuabied',password='wahyuabied',db='ta',charset='utf8mb4',cursorclass=pymysql.cursors.DictCursor)
+		#return pymysql.connect(host='35.185.118.181',user='wahyuabied',password='wahyuabied',db='ta',charset='utf8mb4',cursorclass=pymysql.cursors.DictCursor)
 
 	# def getConnection():
-	#     return pymysql.connect(host='127.0.0.1',user='root',password='',db='ta',charset='utf8mb4',cursorclass=pymysql.cursors.DictCursor)
+	    # return pymysql.connect(host='127.0.0.1',user='root',password='',db='ta',charset='utf8mb4',cursorclass=pymysql.cursors.DictCursor)
 
 	def insert_crop(paths,id_kondisi,r,st_deviasi,median,mean):
 		conn = Db.getConnection()
@@ -61,6 +62,26 @@ class Db:
 			allData.append(data)
 		return allData;
 
+	def selectDataTembakau():
+		conn = Db.getConnection()
+		myCursor = conn.cursor()
+		sql = 'SELECT * from tembakau_tb'
+		myCursor.execute(sql) 
+		result = myCursor.fetchall()
+		conn.commit()
+		conn.close()
+		allData = []
+		for x in range(0, len(result)):
+			data = Tembakau()
+			data.setId(result[x]['id'])
+			data.setNama(result[x]['nama'])
+			data.setLabel(result[x]['label'])
+			data.setMean(result[x]['rataRata'])
+			data.setMedian(result[x]['median'])
+			data.setStDeviasi(result[x]['standarDeviasi'])
+			allData.append(data)
+		return allData;
+
 	def selectDataTomat(kondisi):
 		conn = Db.getConnection()
 		myCursor = conn.cursor()
@@ -106,13 +127,6 @@ class Db:
 		conn.close()
 		allPenyakit = []
 		for x in range(0, len(result)):
-			# penyakit = Penyakit()
-			# penyakit.setId(result[x]['id'])
-			# penyakit.setName(result[x]['name'])
-			# penyakit.setDeskripsi(result[x]['deskripsi'])
-			# penyakit.setGejala(result[x]['gejala'])
-			# penyakit.setSolusi(result[x]['solusi'])
-			# penyakit.setGambar(result[x]['gambar'])
 			penyakit = {
 				'id': result[x]['id'],
 				'name':result[x]['name'],

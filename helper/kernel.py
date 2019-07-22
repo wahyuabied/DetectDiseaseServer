@@ -14,7 +14,7 @@ class kernel:
 
 	def getKernel():
 		filters = []
-		ksize = 31
+		ksize = 49
 		scale  = [kernel.frequency_to_lamda(0.06),kernel.frequency_to_lamda(0.09),kernel.frequency_to_lamda(0.13),kernel.frequency_to_lamda(0.18),kernel.frequency_to_lamda(0.25)] #skalanya ditambah lagi
 		theta = [kernel.degree(0),kernel.degree(30),kernel.degree(45),kernel.degree(60),kernel.degree(90),kernel.degree(120),kernel.degree(135),kernel.degree(150)]
 		for i in np.arange(0, len(theta),1):
@@ -23,6 +23,18 @@ class kernel:
 		 		kern /= 1.5*kern.sum()
 		 		filters.append(kern)
 		return filters
+
+	def getKernelTembakau():
+		filters = []
+		ksize = 31
+		scale  = [kernel.frequency_to_lamda(10),kernel.frequency_to_lamda(13),kernel.frequency_to_lamda(15),kernel.frequency_to_lamda(18),kernel.frequency_to_lamda(20),kernel.frequency_to_lamda(21),kernel.frequency_to_lamda(23),kernel.frequency_to_lamda(24)] #skalanya ditambah lagi
+		theta = [kernel.degree(0),kernel.degree(30),kernel.degree(45),kernel.degree(57),kernel.degree(60),kernel.degree(90),kernel.degree(115),kernel.degree(120),kernel.degree(135),kernel.degree(150),kernel.degree(160),kernel.degree(175)]
+		for i in np.arange(0, len(theta),1):
+			for j in np.arange(0,len(scale),1):
+			 	kern = cv2.getGaborKernel((ksize, ksize), 3.0,theta[i], scale[j], 0.5, 0, ktype=cv2.CV_32F)
+		 		kern /= 1.5*kern.sum()
+		 		filters.append(kern)
+		return filters		
 
 
 #dokumentasi
@@ -190,7 +202,7 @@ class kernel:
 		stdSehat = len(sehatData[2])/len(kelasSehat)
 
 		meanEarly = len(earlyData[0])/len(kelasEarly)
-		medianEarly = len(earlyData[1])/len(kelasEarly)
+		medianEarly = len(earlyData[1])/len(kelasEarly)#masalah terkadang 0
 		stdEarly = len(earlyData[2])/len(kelasEarly)
 
 
@@ -202,15 +214,12 @@ class kernel:
 		early = meanEarly * medianEarly * stdEarly * (len(kelasEarly)/len(dataTraining))
 		late = meanLate * medianLate * stdLate * (len(kelasLate)/len(dataTraining))
 
-
 		if(sehat > early and sehat >late):
 			return "sehat"
 		elif (early > late and early >sehat):
 			return "early"
 		elif (late > early and late >sehat):
 			return "late"
-		else:
-			return(str(sehat) +" "+str(early)+" "+str(late))
 
 		return (str(sehat) +" "+str(early)+" "+str(late))
 
@@ -231,6 +240,28 @@ class kernel:
 				fase = "Parah"
 			else:
 				fase = "Awal Penyakit"
+		else :
+			fase = "-"
+
+		return fase
+
+	def faseTomat(penyakit,data):
+		path = cv2.imread(data,1)
+		rgb = np.average(path,axis=0)
+		rgb = np.average(rgb,axis=0)
+		if penyakit=="early":
+			if rgb[1]-rgb[0]>8:
+				if rgb[1]-rgb[2]>5:
+					fase = "Parah"
+				else:
+					fase = "Awal Penyakit"
+			else:
+				fase = "Awal Penyakit"
+		elif penyakit == "late":
+			if rgb[1]-rgb[2]>10:
+				fase = "Awal  Penyakit"
+			else:
+				fase = "Parah"
 		else :
 			fase = "-"
 
@@ -304,4 +335,6 @@ class kernel:
 		return stDeviasi
 
 	def autoLevel(data):
-		return cv2.equalizeHist(data)
+		equ = cv2.equalizeHist(data)
+		res = np.hstack((data,equ))
+		return res

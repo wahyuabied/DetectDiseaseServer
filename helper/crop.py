@@ -21,7 +21,7 @@ class crop:
 		## (3) Max area
 		#sekarang findCountour hanya mengembalikan contour dan hierarcy cnts, _ = 
 		# _, cnts, _ = cv2.findContours(morphed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) windows
-		cnts, _ = cv2.findContours(morphed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) #linux
+		_, cnts, _ = cv2.findContours(morphed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) #linux
 		cnt = sorted(cnts, key=cv2.contourArea)[-1]
 
 		## (4) Crop and save
@@ -42,7 +42,7 @@ class crop:
 
 	   #Hard Coding the Rect The object must lie within this rect.
 	    rect = (15,15,width-30,height-30)
-	    cv2.grabCut(img,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)
+	    cv2.grabCut(img,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)#46
 	    mask = np.where((mask==2)|(mask==0),0,1).astype('uint8')
 	    img1 = img*mask[:,:,np.newaxis]
 	    newmask = color.rgb2gray(img)
